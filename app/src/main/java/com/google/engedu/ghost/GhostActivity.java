@@ -17,6 +17,7 @@ package com.google.engedu.ghost;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
@@ -144,6 +146,7 @@ public class GhostActivity extends AppCompatActivity {
                 text.setText(wordFragment);
                 currentWord = wordFragment;
                 userTurn = true;
+                label.setText(USER_TURN);
             }
             else
             {
@@ -156,6 +159,7 @@ public class GhostActivity extends AppCompatActivity {
             }
         }
         score.setText(" UserWin = "+userWin+" \n CompWin = "+compWin);
+        challenge.setEnabled(true);
         /*SharedPreferences sharedPref = getSharedPreferences("mypref",0);
         //getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -174,19 +178,26 @@ public class GhostActivity extends AppCompatActivity {
      */
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        /**
-         **
-         **  YOUR CODE GOES HERE
-         **
-         **/
+
         if(keyCode>=29 && keyCode<=54)
         {
             char c=(char) event.getUnicodeChar();
             wordFragment=(String) text.getText();
             wordFragment=currentWord + Character.toString(c);
             text.setText(wordFragment);
-            computerTurn();
+            label.setText(COMPUTER_TURN);
+            challenge.setEnabled(false);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("delay","compturn");
+                    computerTurn();
+
+                }
+            }, 1000);
             return true;
+
         }
         return super.onKeyUp(keyCode, event);
     }
@@ -230,13 +241,23 @@ public class GhostActivity extends AppCompatActivity {
         if(userTurn)
         {
               label.setText(USER_TURN);
+            score.setText(" UserWin = "+userWin+" \n CompWin = "+compWin);
         }
         else
         {
             label.setText(COMPUTER_TURN);
-            computerTurn();
+            challenge.setEnabled(false);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e("delay","compturn");
+                    computerTurn();
+                }
+            }, 2000);
+
         }
-        score.setText(" UserWin = "+userWin+" \n CompWin = "+compWin);
+
         /*SharedPreferences sharedPref = getSharedPreferences("mypref",0);
         //getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
